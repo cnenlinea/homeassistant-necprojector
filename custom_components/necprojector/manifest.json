@@ -1,0 +1,10 @@
+{
+  "domain": "necprojector",
+  "name": "NEC Projector",
+  "codeowners": [],
+  "dependencies": [],
+  "documentation": "",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": []
+}
