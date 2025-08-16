@@ -99,7 +99,7 @@ class NecProjectorApi:
         max_zoom = re.search("(?<=max\\=)\\d+", decoded_response)
         min_zoom = re.search("(?<=min\\=)\\d+", decoded_response)
         if not zoom_value or not max_zoom or not min_zoom:
-            raise ProjectorCommandError("Invalid zoom response from projector")
+            raise ProjectorCommandError(f"Invalid zoom response from projector: {decoded_response}")
         return {
             "zoom_value": zoom_value.group(),
             "max_zoom": zoom_value.group(),
