@@ -92,11 +92,11 @@ class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
         )
 
     @property
-    def is_open(self) -> bool:
+    def is_on(self) -> bool:
         """Return true if the shutter is open."""
         return self.coordinator.data.get("shutter_status", False) == "open"
 
-    async def async_open_shutter(self, **kwargs) -> None:
+    async def async_turn_on(self, **kwargs) -> None:
         await self.coordinator.api.async_open_shutter()
         try:
             async with asyncio.timeout(10):
@@ -107,7 +107,7 @@ class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
         except TimeoutError:
             pass
 
-    async def async_close_shutter(self, **kwargs) -> None:
+    async def async_turn_off(self, **kwargs) -> None:
         await self.coordinator.api.async_close_shutter()
         try:
             async with asyncio.timeout(10):
