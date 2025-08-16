@@ -11,7 +11,7 @@ CMD_POWER_OFF = b"\x02\x01\x00\x00\x00\x03"
 CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
 # NEC Projector Commands (ASCII)
 CMD_SHUTTER = "shutter {shutter_arg}\r"
-CMD_LENS_ZOOM = "zoom {zoom_arg}\r"
+CMD_LENS_ZOOM = "lens zoom {zoom_arg}\r"
 
 class ProjectorConnectionError(Exception):
     """Exception to indicate a connection error."""
