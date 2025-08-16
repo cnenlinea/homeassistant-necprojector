@@ -1,6 +1,7 @@
 """API for NEC Projector Control."""
 
 import asyncio
+import re
 
 from .const import DEFAULT_PORT, DEFAULT_TIMEOUT, LOGGER
 
@@ -8,7 +9,8 @@ from .const import DEFAULT_PORT, DEFAULT_TIMEOUT, LOGGER
 CMD_POWER_ON = b"\x02\x00\x00\x00\x00\x02"
 CMD_POWER_OFF = b"\x02\x01\x00\x00\x00\x03"
 CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
-
+# NEC Projector Commands (ASCII)
+CMD_SHUTTER = f"shutter {shutter_arg}\r"
 
 class ProjectorConnectionError(Exception):
     """Exception to indicate a connection error."""
@@ -56,6 +58,25 @@ class NecProjectorApi:
     async def async_power_off(self) -> None:
         """Turn the projector off."""
         await self._send_command(CMD_POWER_OFF)
+
+    async def async_open_shutter(self) -> None:
+        """Turn the projector on."""
+        command = CMD_SHUTTER.format(shutter_arg="open").encode("ascii")
+        await self._send_command(command)
+
+    async def async_close_shutter(self) -> None:
+        """Turn the projector off."""
+        command = CMD_SHUTTER.format(shutter_arg="close").encode("ascii")
+        await self._send_command(command)
+    
+    async def async_get_shutter_status(self) -> dict[str, bool]:
+        """Turn the projector off."""
+        command = CMD_SHUTTER.format(shutter_arg="?").encode("ascii")
+        response = await self._send_command(command)
+        shutter_value = re.search("(?<=cur\=)\w+", response)
+        if not shutter_value:
+            raise ProjectorCommandError("Invalid shutter status response from projector")
+        return {"shutter_status": shutter_value.group()}
 
     async def async_get_status(self) -> dict[str, bool]:
         """Get the power status of the projector."""

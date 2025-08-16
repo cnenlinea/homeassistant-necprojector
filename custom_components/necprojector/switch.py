@@ -18,12 +18,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the NEC Projector switch."""
-    switch = NecProjectorSwitch(coordinator=hass.data[entry.entry_id], entry=entry)
-    async_add_entities([switch], update_before_add=True)
+    power_switch = NecProjectorPowerSwitch(coordinator=hass.data[entry.entry_id], entry=entry)
+    shutter_switch = NecProjectorShutterSwitch(coordinator=hass.data[entry.entry_id], entry=entry)
+    async_add_entities([power_switch, shutter_switch], update_before_add=True)
 
 
-class NecProjectorSwitch(CoordinatorEntity, SwitchEntity):
-    """Representation of a NEC Projector switch."""
+class NecProjectorPowerSwitch(CoordinatorEntity, SwitchEntity):
+    """Representation of a NEC Projector power switch."""
 
     def __init__(
         self, coordinator: NecProjectorCoordinator, entry: ConfigEntry
@@ -61,6 +62,53 @@ class NecProjectorSwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
         await self.coordinator.api.async_power_off()
+        try:
+            async with asyncio.timeout(10):
+                await self.coordinator.async_request_refresh()
+                if not self.is_on:
+                    return
+                await asyncio.sleep(0.5)
+        except TimeoutError:
+            pass
+
+
+class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
+    """Representation of a NEC Projector shutter switch."""
+
+    def __init__(
+        self, coordinator: NecProjectorCoordinator, entry: ConfigEntry
+    ) -> None:
+        """Initialize the switch."""
+        super().__init__(coordinator)
+        self._entry = entry
+        self._attr_unique_id = f"{entry.unique_id}_shutter"
+        self._attr_name = f"{entry.title} Shutter"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry.unique_id)}, name=self._entry.title
+        )
+
+    @property
+    def is_open(self) -> bool:
+        """Return true if the shutter is open."""
+        return self.coordinator.data.get("shutter_status", False) == "open"
+
+    async def async_open_shutter(self, **kwargs) -> None:
+        await self.coordinator.api.async_open_shutter()
+        try:
+            async with asyncio.timeout(10):
+                await self.coordinator.async_request_refresh()
+                if self.is_on:
+                    return
+                await asyncio.sleep(0.5)
+        except TimeoutError:
+            pass
+
+    async def async_close_shutter(self, **kwargs) -> None:
+        await self.coordinator.api.async_close_shutter()
         try:
             async with asyncio.timeout(10):
                 await self.coordinator.async_request_refresh()
