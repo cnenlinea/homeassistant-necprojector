@@ -65,7 +65,7 @@ class NecProjectorApi:
             raise ProjectorCommandError("Invalid status response from projector")
 
         # DATA03 indicates power status: 0x01 is Power On
-        power_on = response[2] == 0x01
+        power_on = response[7] == 0x01
 
         return {"power_on": power_on}
 
