@@ -26,6 +26,7 @@ class NecProjectorCoordinator(DataUpdateCoordinator):
         try:
             power_status = await self.api.async_get_status()
             shutter_status = await self.api.async_get_shutter_status()
-            return power_status | shutter_status
+            zoom_status = await self.api.async_get_zoom()
+            return power_status | shutter_status | zoom_status
         except (ProjectorConnectionError, ProjectorCommandError) as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err

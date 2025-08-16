@@ -11,6 +11,7 @@ CMD_POWER_OFF = b"\x02\x01\x00\x00\x00\x03"
 CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
 # NEC Projector Commands (ASCII)
 CMD_SHUTTER = "shutter {shutter_arg}\r"
+CMD_LENS_ZOOM = "zoom {zoom_arg}\r"
 
 class ProjectorConnectionError(Exception):
     """Exception to indicate a connection error."""
@@ -89,6 +90,25 @@ class NecProjectorApi:
         power_on = response[7] == 0x01
 
         return {"power_on": power_on}
+
+    async def async_get_zoom(self) -> dict[str, bool]:
+        command = CMD_LENS_ZOOM.format(zoom_arg="?").encode("ascii")
+        response = await self._send_command(command)
+        decoded_response = response.decode()
+        zoom_value = re.search("(?<=cur\\=)\\d+", decoded_response)
+        max_zoom = re.search("(?<=max\\=)\\d+", decoded_response)
+        min_zoom = re.search("(?<=min\\=)\\d+", decoded_response)
+        if not zoom_value or not max_zoom or not min_zoom:
+            raise ProjectorCommandError("Invalid zoom response from projector")
+        return {
+            "zoom_value": zoom_value.group(),
+            "max_zoom": zoom_value.group(),
+            "min_zoom": zoom_value.group()
+        }
+
+    async def async_set_zoom(self, zoom_level: int) -> None:
+        command = CMD_LENS_ZOOM.format(zoom_arg=zoom_level).encode("ascii")
+        await self._send_command(command)
 
     async def async_test_connection(self) -> bool:
         """Test the connection to the projector."""
