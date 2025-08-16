@@ -73,7 +73,7 @@ class NecProjectorApi:
         """Turn the projector off."""
         command = CMD_SHUTTER.format(shutter_arg="?").encode("ascii")
         response = await self._send_command(command)
-        shutter_value = re.search("(?<=cur\\=)\\w+", response)
+        shutter_value = re.search("(?<=cur\\=)\\w+", response.decode())
         if not shutter_value:
             raise ProjectorCommandError("Invalid shutter status response from projector")
         return {"shutter_status": shutter_value.group()}
