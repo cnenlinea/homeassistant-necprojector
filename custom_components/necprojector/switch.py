@@ -50,7 +50,7 @@ class NecProjectorSwitch(CoordinatorEntity, SwitchEntity):
         """Turn the switch on."""
         await self.coordinator.api.async_power_on()
         try:
-            async with asyncio.timeout(5):
+            async with asyncio.timeout(10):
                 await self.coordinator.async_request_refresh()
                 if self.is_on:
                     return
@@ -62,7 +62,7 @@ class NecProjectorSwitch(CoordinatorEntity, SwitchEntity):
         """Turn the switch off."""
         await self.coordinator.api.async_power_off()
         try:
-            async with asyncio.timeout(5):
+            async with asyncio.timeout(10):
                 await self.coordinator.async_request_refresh()
                 if not self.is_on:
                     return
