@@ -1,4 +1,5 @@
 """Switch platform for NEC Projector."""
+import asyncio
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -48,9 +49,23 @@ class NecProjectorSwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
         await self.coordinator.api.async_power_on()
-        await self.coordinator.async_request_refresh()
+        try:
+            async with asyncio.timeout(5):
+                await self.coordinator.async_request_refresh()
+                if self.is_on:
+                    return
+                await asyncio.sleep(0.5)
+        except TimeoutError:
+            pass
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
         await self.coordinator.api.async_power_off()
-        await self.coordinator.async_request_refresh()
+        try:
+            async with asyncio.timeout(5):
+                await self.coordinator.async_request_refresh()
+                if not self.is_on:
+                    return
+                await asyncio.sleep(0.5)
+        except TimeoutError:
+            pass
