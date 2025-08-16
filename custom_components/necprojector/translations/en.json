@@ -1,0 +1,44 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up NEC Projector",
+        "description": "Enter the connection details for your projector.",
+        "data": {
+          "host": "IP Address",
+          "name": "Name",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Please check the IP address and port, and ensure the projector is powered on and connected to the network.",
+      "unknown": "An unknown error occurred."
+    },
+    "abort": {
+      "already_configured": "This projector is already configured."
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send Command",
+      "description": "Sends a hexadecimal command to a NEC projector",
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "Hexadecimal command to send to the NEC projector, without spaces or prefixes (e.g. '00850000010187')."
+        }
+      }
+    },
+    "send_ascii_command": {
+      "name": "Send ASCII Command",
+      "description": "Sends an ASCII command to a NEC projector",
+      "fields": {
+        "command": {
+          "name": "ASCII Command",
+          "description": "ASCII command to send to the NEC projector (e.g. 'power on')"
+        }
+      }
+    }
+  }
+}

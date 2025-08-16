@@ -1,0 +1,44 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Proyector NEC",
+        "description": "Detalles de conexión del proyector.",
+        "data": {
+          "host": "Dirección IP del proyector",
+          "name": "Nombre del proyector",
+          "port": "Puerto de red"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Error al conectar con el proyector. Revise la dirección IP y el puerto, y asegúrese de que el proyector esté encendido y conectado a la red.",
+      "unknown": "Error desconocido."
+    },
+    "abort": {
+      "already_configured": "Un proyector con esta dirección IP ya está configurado."
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Enviar comando",
+      "description": "Envía un comando hexadecimal a un proyector NEC",
+      "fields": {
+        "command": {
+          "name": "Comando",
+          "description": "Comando hexadecimal para enviar al proyector NEC, sin espacios ni prefijos (ej. '00850000010187')."
+        }
+      }
+    },
+    "send_ascii_command": {
+      "name": "Enviar comando ASCII",
+      "description": "Envía un comando ASCII a un proyector NEC",
+      "fields": {
+        "command": {
+          "name": "Comando ASCII",
+          "description": "Comando ASCII para enviar al proyector NEC (ej. 'power on')"
+        }
+      }
+    }
+  }
+}

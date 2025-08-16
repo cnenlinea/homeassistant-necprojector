@@ -1,44 +1,20 @@
-send:
-  name: Send command
-  description: Sends a command to a NEC projector.
+send_command:
+  target:
+    device:
+      integration: necprojector
   fields:
-    device_id:
-      name: Projector
-      description: The projector you want to send a command to
-      required: true
-      selector:
-        device:
-          integration: necprojector
     command:
-      name: Command
-      description: A command to send.
       required: true
-      example: "menu"
+      example: "00850000010187"
       selector:
         text:
-    action:
-      name: Action
-      description: The action for the given command.
-      required: false
-      example: "on"
-      default: "?"
-      selector:
-        text:
-send_raw:
-  name: Send Raw command
-  description: Sends a raw command to a NEC projector.
+send_ascii_command:
+  target:
+    device:
+      integration: necprojector
   fields:
-    device_id:
-      name: Projector
-      description: The projector you want to send a command to
-      required: true
-      selector:
-        device:
-          integration: necprojector
     command:
-      name: Command
-      description: A raw command to send.
       required: true
-      example: "*menu=on#"
+      example: "power on"
       selector:
         text:

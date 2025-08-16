@@ -1,4 +1,3 @@
 {
-	"name": "NEC projector",
-    "homeassistant": "2024.12.0"
+	"name": "NEC Projector Control"
 }
