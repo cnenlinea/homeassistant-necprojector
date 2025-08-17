@@ -1,4 +1,5 @@
 """Switch platform for NEC Projector."""
+
 import asyncio
 
 from homeassistant.components.switch import SwitchEntity
@@ -18,8 +19,12 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the NEC Projector switch."""
-    power_switch = NecProjectorPowerSwitch(coordinator=hass.data[entry.entry_id], entry=entry)
-    shutter_switch = NecProjectorShutterSwitch(coordinator=hass.data[entry.entry_id], entry=entry)
+    power_switch = NecProjectorPowerSwitch(
+        coordinator=hass.data[entry.entry_id], entry=entry
+    )
+    shutter_switch = NecProjectorShutterSwitch(
+        coordinator=hass.data[entry.entry_id], entry=entry
+    )
     async_add_entities([power_switch, shutter_switch], update_before_add=True)
 
 

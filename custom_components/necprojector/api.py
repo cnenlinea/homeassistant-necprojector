@@ -13,6 +13,7 @@ CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
 CMD_SHUTTER = "shutter {shutter_arg}\r"
 CMD_LENS_ZOOM = "lens zoom {zoom_arg}\r"
 
+
 class ProjectorConnectionError(Exception):
     """Exception to indicate a connection error."""
 
@@ -69,14 +70,16 @@ class NecProjectorApi:
         """Turn the projector off."""
         command = CMD_SHUTTER.format(shutter_arg="close").encode("ascii")
         await self._send_command(command)
-    
+
     async def async_get_shutter_status(self) -> dict[str, bool]:
         """Turn the projector off."""
         command = CMD_SHUTTER.format(shutter_arg="?").encode("ascii")
         response = await self._send_command(command)
         shutter_value = re.search("(?<=cur\\=)\\w+", response.decode())
         if not shutter_value:
-            raise ProjectorCommandError("Invalid shutter status response from projector")
+            raise ProjectorCommandError(
+                "Invalid shutter status response from projector"
+            )
         return {"shutter_status": shutter_value.group()}
 
     async def async_get_status(self) -> dict[str, bool]:
@@ -99,11 +102,13 @@ class NecProjectorApi:
         max_zoom = re.search("(?<=max\\=)\\d+", decoded_response)
         min_zoom = re.search("(?<=min\\=)\\d+", decoded_response)
         if not zoom_value or not max_zoom or not min_zoom:
-            raise ProjectorCommandError(f"Invalid zoom response from projector: {decoded_response}")
+            raise ProjectorCommandError(
+                f"Invalid zoom response from projector: {decoded_response}"
+            )
         return {
             "zoom_value": zoom_value.group(),
-            "max_zoom": zoom_value.group(),
-            "min_zoom": zoom_value.group()
+            "max_zoom": max_zoom.group(),
+            "min_zoom": min_zoom.group(),
         }
 
     async def async_set_zoom(self, zoom_level: int) -> None:

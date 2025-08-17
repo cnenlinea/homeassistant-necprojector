@@ -6,7 +6,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 
 from .api import NecProjectorApi
-from .const import DOMAIN, PLATFORMS, SERVICE_SEND_COMMAND, LOGGER
+from .const import DOMAIN, LOGGER, PLATFORMS, SERVICE_SEND_COMMAND
 from .coordinator import NecProjectorCoordinator
 
 

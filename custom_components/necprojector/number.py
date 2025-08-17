@@ -1,5 +1,4 @@
 """Number platform for NEC Projector."""
-import asyncio
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
@@ -18,7 +17,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the NEC Projector number entities."""
-    zoom_number = NecProjectorZoomNumber(coordinator=hass.data[entry.entry_id], entry=entry)
+    zoom_number = NecProjectorZoomNumber(
+        coordinator=hass.data[entry.entry_id], entry=entry
+    )
     async_add_entities([zoom_number], update_before_add=True)
 
 
@@ -42,39 +43,43 @@ class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self._entry.unique_id)}, name=self._entry.title
         )
-    
+
     @callback
     def _handle_coordinator_update(self) -> None:
-        if self.coordinator.data and self.coordinator.data.get("zoom_level"):
+        if self.coordinator.data and self.coordinator.data.get("zoom_value"):
             try:
-                self._attr_native_value = float(self.coordinator.data.get("zoom_level"))
+                self._attr_native_value = float(self.coordinator.data.get("zoom_value"))
             except ValueError as ex:
                 LOGGER.error(
-                    "ValueError for zoom_level, %s",
+                    "ValueError for zoom_value, %s",
                     ex,
                 )
             except TypeError as ex:
-                LOGGER.error("TypeError for zoom_level, %s", ex)
+                LOGGER.error("TypeError for zoom_value, %s", ex)
         else:
-            LOGGER.debug("zoom_level is not available")
+            LOGGER.debug("zoom_value is not available")
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
 
-        if self.coordinator.data and self.coordinator.data.get("zoom_level"):
+        if self.coordinator.data and self.coordinator.data.get("zoom_value"):
             try:
-                self._attr_native_value = float(self.coordinator.data.get("zoom_level"))
-                self._attr_native_max_value = float(self.coordinator.data.get("max_zoom"))
-                self._attr_native_min_value = float(self.coordinator.data.get("min_zoom"))
+                self._attr_native_value = float(self.coordinator.data.get("zoom_value"))
+                self._attr_native_max_value = float(
+                    self.coordinator.data.get("max_zoom")
+                )
+                self._attr_native_min_value = float(
+                    self.coordinator.data.get("min_zoom")
+                )
             except ValueError as ex:
                 LOGGER.error(
                     "ValueError for zoom_level, %s",
                     ex,
                 )
             except TypeError as ex:
-                LOGGER.error("TypeError for zoom_level, %s", ex)
+                LOGGER.error("TypeError for zoom_value, %s", ex)
         else:
-            LOGGER.debug("zoom_level is not available")
+            LOGGER.debug("zoom_value is not available")
 
     async def async_set_native_value(self, value: float) -> None:
         """Turn the switch on."""
