@@ -1,7 +1,7 @@
 """Number platform for NEC Projector."""
 import asyncio
 
-from homeassistant.components.number import NumberEntity
+from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import DeviceInfo
@@ -34,6 +34,7 @@ class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
         self._attr_native_step = 1
         self._attr_unique_id = f"{entry.unique_id}_zoom"
         self._attr_name = f"{entry.title} Zoom"
+        self._attr_mode = NumberMode.BOX
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -41,7 +42,6 @@ class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self._entry.unique_id)}, name=self._entry.title
         )
-
     
     @callback
     def _handle_coordinator_update(self) -> None:
