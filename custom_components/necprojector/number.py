@@ -19,7 +19,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the NEC Projector number entities."""
     zoom_number = NecProjectorZoomNumber(coordinator=hass.data[entry.entry_id], entry=entry)
-    async_add_entities([pzoom_number], update_before_add=True)
+    async_add_entities([zoom_number], update_before_add=True)
 
 
 class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
