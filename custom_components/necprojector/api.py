@@ -92,7 +92,17 @@ class NecProjectorApi:
         # DATA03 indicates power status: 0x01 is Power On
         power_on = response[7] == 0x01
 
-        return {"power_on": power_on}
+        status = {
+            0x00: "Standby (Sleep)",
+            0x04: "Power on",
+            0x05: "Cooling",
+            0x06: "Standby (error)",
+            0x0f: "Standby (Power saving)",
+            0x10: "Network standby",
+            0xff: "Not supported"
+        }.get(response[10], "Invalid status")
+
+        return {"power_on": power_on, "status": status}
 
     async def async_get_lens_value(self, lens_subcommand: str) -> dict[str, bool]:
         command = CMD_LENS.format(lens_subcmd=lens_subcommand, lens_arg="?").encode("ascii")

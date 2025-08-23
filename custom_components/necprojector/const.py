@@ -6,7 +6,7 @@ DOMAIN = "necprojector"
 LOGGER = logging.getLogger(__package__)
 
 # Platforms to be set up
-PLATFORMS = ["switch", "number"]
+PLATFORMS = ["switch", "number", "sensor"]
 
 # Default values
 DEFAULT_NAME = "NEC Projector"
