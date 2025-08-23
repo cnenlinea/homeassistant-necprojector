@@ -98,4 +98,5 @@ class NecProjectorLensNumber(CoordinatorEntity, NumberEntity):
         if self.coordinator.data.get("power_on"):
             lens_value = int(value)
             await self.coordinator.api.async_set_lens_value(self.lens_property, lens_value)
+            self._attr_native_value = lens_value
             self.async_write_ha_state()

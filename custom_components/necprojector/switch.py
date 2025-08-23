@@ -59,27 +59,14 @@ class NecProjectorPowerSwitch(CoordinatorEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
         await self.coordinator.api.async_power_on()
-        try:
-            async with asyncio.timeout(10):
-                await self.coordinator.async_request_refresh()
-                if self.is_on:
-                    return
-                await asyncio.sleep(0.5)
-        except TimeoutError:
-            pass
+        self._attr_is_on = True
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
         await self.coordinator.api.async_power_off()
-        try:
-            async with asyncio.timeout(10):
-                await self.coordinator.async_request_refresh()
-                if not self.is_on:
-                    return
-                await asyncio.sleep(0.5)
-        except TimeoutError:
-            pass
-
+        self._attr_is_on = False
+        self.async_write_ha_state()
 
 class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of a NEC Projector shutter switch."""
@@ -107,22 +94,10 @@ class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         await self.coordinator.api.async_open_shutter()
-        try:
-            async with asyncio.timeout(10):
-                await self.coordinator.async_request_refresh()
-                if self.is_on:
-                    return
-                await asyncio.sleep(0.5)
-        except TimeoutError:
-            pass
+        self._attr_is_on = True
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
         await self.coordinator.api.async_close_shutter()
-        try:
-            async with asyncio.timeout(10):
-                await self.coordinator.async_request_refresh()
-                if not self.is_on:
-                    return
-                await asyncio.sleep(0.5)
-        except TimeoutError:
-            pass
+        self._attr_is_on = False
+        self.async_write_ha_state()
