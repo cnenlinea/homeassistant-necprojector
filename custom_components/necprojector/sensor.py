@@ -35,6 +35,8 @@ class NecProjectorStatusSensor(CoordinatorEntity, SensorEntity):
         self._entry = entry
         self._attr_unique_id = f"{entry.unique_id}_status"
         self._attr_name = f"{entry.title} Status"
+        self._attr_has_entity_name = True
+        self._attr_available = True
 
     @property
     def device_info(self) -> DeviceInfo:
