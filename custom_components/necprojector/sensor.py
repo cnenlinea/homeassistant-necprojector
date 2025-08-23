@@ -28,7 +28,7 @@ class NecProjectorStatusSensor(CoordinatorEntity, SensorEntity):
     """Representation of a NEC Projector current status."""
 
     def __init__(
-        self, coordinator: NecProjectorCoordinator, entry: ConfigEntry, lens_property: str
+        self, coordinator: NecProjectorCoordinator, entry: ConfigEntry
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
