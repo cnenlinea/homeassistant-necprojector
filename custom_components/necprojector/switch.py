@@ -99,14 +99,14 @@ class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         if self.coordinator.data:
-            self._attr_is_on = self.coordinator.data.get("shutter_status", False)
+            self._attr_is_on = self.coordinator.data.get("shutter_status", False) == "open"
     
         self.async_write_ha_state()
     
     @callback
     def _handle_coordinator_update(self) -> None:
         if self.coordinator.data:
-            self._attr_is_on = self.coordinator.data.get("shutter_status", False)
+            self._attr_is_on = self.coordinator.data.get("shutter_status", False) == "open"
     
         self.async_write_ha_state()
 
