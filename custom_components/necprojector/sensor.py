@@ -21,7 +21,7 @@ async def async_setup_entry(
         coordinator=hass.data[entry.entry_id], entry=entry
     )
     
-    async_add_entities(lens_numbers, update_before_add=True)
+    async_add_entities(status_sensor, update_before_add=True)
 
 
 class NecProjectorStatusSensor(CoordinatorEntity, SensorEntity):
