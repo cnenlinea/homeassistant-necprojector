@@ -4,7 +4,7 @@ import asyncio
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -51,10 +51,19 @@ class NecProjectorPowerSwitch(CoordinatorEntity, SwitchEntity):
             identifiers={(DOMAIN, self._entry.unique_id)}, name=self._entry.title
         )
 
-    @property
-    def is_on(self) -> bool:
-        """Return true if the switch is on."""
-        return self.coordinator.data.get("power_on", False)
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if self.coordinator.data:
+            self._attr_is_on = self.coordinator.data.get("power_on", False)
+    
+        self.async_write_ha_state()
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        if self.coordinator.data:
+            self._attr_is_on = self.coordinator.data.get("power_on", False)
+    
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
@@ -87,10 +96,19 @@ class NecProjectorShutterSwitch(CoordinatorEntity, SwitchEntity):
             identifiers={(DOMAIN, self._entry.unique_id)}, name=self._entry.title
         )
 
-    @property
-    def is_on(self) -> bool:
-        """Return true if the shutter is open."""
-        return self.coordinator.data.get("shutter_status", False) == "open"
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if self.coordinator.data:
+            self._attr_is_on = self.coordinator.data.get("shutter_status", False)
+    
+        self.async_write_ha_state()
+    
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        if self.coordinator.data:
+            self._attr_is_on = self.coordinator.data.get("shutter_status", False)
+    
+        self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs) -> None:
         await self.coordinator.api.async_open_shutter()
