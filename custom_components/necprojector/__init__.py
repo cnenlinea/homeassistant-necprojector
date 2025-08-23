@@ -82,7 +82,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.services.async_register(
         DOMAIN,
-        "send_ascii_command",
+        SERVICE_SEND_ASCII_COMMAND,
         send_ascii_command_service,
         supports_response=SupportsResponse.ONLY,
     )
@@ -98,5 +98,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if not hass.data:
         hass.services.async_remove(DOMAIN, SERVICE_SEND_COMMAND)
+        hass.services.async_remove(DOMAIN, SERVICE_SEND_ASCII_COMMAND)
 
     return unload_ok

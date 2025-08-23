@@ -16,3 +16,4 @@ DEFAULT_SCAN_INTERVAL = 30
 
 # Service names
 SERVICE_SEND_COMMAND = "send_command"
+SERVICE_SEND_ASCII_COMMAND = "send_ascii_command"

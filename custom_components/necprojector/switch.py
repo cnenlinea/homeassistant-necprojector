@@ -19,13 +19,17 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the NEC Projector switch."""
-    power_switch = NecProjectorPowerSwitch(
-        coordinator=hass.data[entry.entry_id], entry=entry
-    )
-    shutter_switch = NecProjectorShutterSwitch(
-        coordinator=hass.data[entry.entry_id], entry=entry
-    )
-    async_add_entities([power_switch, shutter_switch], update_before_add=True)
+    switches = [
+        NecProjectorPowerSwitch(
+            coordinator=hass.data[entry.entry_id], entry=entry
+        )
+    ]
+    if hass.data[entry.entry_id].data.get("shutter_status") != "disabled":
+        shutter_switch = NecProjectorShutterSwitch(
+            coordinator=hass.data[entry.entry_id], entry=entry
+        )
+        switches.append(shutter_switch)
+    async_add_entities(switches, update_before_add=True)
 
 
 class NecProjectorPowerSwitch(CoordinatorEntity, SwitchEntity):
