@@ -17,24 +17,28 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the NEC Projector number entities."""
-    zoom_number = NecProjectorZoomNumber(
-        coordinator=hass.data[entry.entry_id], entry=entry
-    )
-    async_add_entities([zoom_number], update_before_add=True)
+    lens_properties = ["zoom", "focus", "h_shift", "v_shift"]
+
+    lens_numbers = [NecProjectorLensNumber(
+            coordinator=hass.data[entry.entry_id], entry=entry, lens_property=p
+        ) for p in lens_properties
+    ]
+    async_add_entities(lens_numbers, update_before_add=True)
 
 
-class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
-    """Representation of a NEC Projector zoom."""
+class NecProjectorLensNumber(CoordinatorEntity, NumberEntity):
+    """Representation of a NEC Projector lens property."""
 
     def __init__(
-        self, coordinator: NecProjectorCoordinator, entry: ConfigEntry
+        self, coordinator: NecProjectorCoordinator, entry: ConfigEntry, lens_property: str
     ) -> None:
-        """Initialize the switch."""
+        """Initialize the number."""
         super().__init__(coordinator)
+        self.lens_property = lens_property
         self._entry = entry
         self._attr_native_step = 1
-        self._attr_unique_id = f"{entry.unique_id}_zoom"
-        self._attr_name = f"{entry.title} Zoom"
+        self._attr_unique_id = f"{entry.unique_id}_{lens_property}"
+        self._attr_name = f"{entry.title} {lens_property.capitalize()}"
         self._attr_mode = NumberMode.BOX
 
     @property
@@ -46,43 +50,49 @@ class NecProjectorZoomNumber(CoordinatorEntity, NumberEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        if self.coordinator.data and self.coordinator.data.get("zoom_value"):
+        value_property = f"{self.lens_property}_value"
+        if self.coordinator.data and self.coordinator.data.get(value_property):
             try:
-                self._attr_native_value = float(self.coordinator.data.get("zoom_value"))
+                self._attr_native_value = float(self.coordinator.data.get(value_property))
             except ValueError as ex:
                 LOGGER.error(
-                    "ValueError for zoom_value, %s",
-                    ex,
+                    "ValueError for %s, %s",
+                    value_property,
+                    ex
                 )
             except TypeError as ex:
-                LOGGER.error("TypeError for zoom_value, %s", ex)
+                LOGGER.error("TypeError for %s, %s", value_property, ex)
         else:
-            LOGGER.debug("zoom_value is not available")
+            LOGGER.debug(f"{value_property} is not available")
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
+        value_property = f"{self.lens_property}_value"
+        max_property = f"{self.lens_property}_max"
+        min_property = f"{self.lens_property}_min"
 
-        if self.coordinator.data and self.coordinator.data.get("zoom_value"):
+        if self.coordinator.data and self.coordinator.data.get(value_property):
             try:
-                self._attr_native_value = float(self.coordinator.data.get("zoom_value"))
+                self._attr_native_value = float(self.coordinator.data.get(value_property))
                 self._attr_native_max_value = float(
-                    self.coordinator.data.get("max_zoom")
+                    self.coordinator.data.get(max_property)
                 )
                 self._attr_native_min_value = float(
-                    self.coordinator.data.get("min_zoom")
+                    self.coordinator.data.get(min_property)
                 )
             except ValueError as ex:
                 LOGGER.error(
-                    "ValueError for zoom_level, %s",
-                    ex,
+                    "ValueError for %s, %s",
+                    value_property,
+                    ex
                 )
             except TypeError as ex:
-                LOGGER.error("TypeError for zoom_value, %s", ex)
+                LOGGER.error("TypeError for %s, %s", value_property, ex)
         else:
-            LOGGER.debug("zoom_value is not available")
+            LOGGER.debug(f"{value_property} is not available")
 
     async def async_set_native_value(self, value: float) -> None:
         """Turn the switch on."""
         if self.coordinator.data.get("power_on"):
-            zoom_level = int(value)
-            await self.coordinator.api.async_set_zoom(zoom_level)
+            lens_value = int(value)
+            await self.coordinator.api.async_set_lens_value(self.lens_property, lens_value)
