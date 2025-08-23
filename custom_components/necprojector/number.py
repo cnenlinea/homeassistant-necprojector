@@ -64,6 +64,8 @@ class NecProjectorLensNumber(CoordinatorEntity, NumberEntity):
                 LOGGER.error("TypeError for %s, %s", value_property, ex)
         else:
             LOGGER.debug(f"{value_property} is not available")
+    
+        self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
@@ -96,3 +98,4 @@ class NecProjectorLensNumber(CoordinatorEntity, NumberEntity):
         if self.coordinator.data.get("power_on"):
             lens_value = int(value)
             await self.coordinator.api.async_set_lens_value(self.lens_property, lens_value)
+            self.async_write_ha_state()
