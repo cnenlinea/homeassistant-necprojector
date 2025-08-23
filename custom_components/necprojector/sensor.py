@@ -48,13 +48,13 @@ class NecProjectorStatusSensor(CoordinatorEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         if self.coordinator.data and self.coordinator.data.get("status"):
-            self._attr_native_value = float(self.coordinator.data.get("status"))
+            self._attr_native_value = self.coordinator.data.get("status")
         
         self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         if self.coordinator.data and self.coordinator.data.get("status"):
-            self._attr_native_value = float(self.coordinator.data.get("status"))
+            self._attr_native_value = self.coordinator.data.get("status")
         
         self.async_write_ha_state()
