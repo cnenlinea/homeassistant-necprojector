@@ -131,7 +131,7 @@ class NecProjectorApi:
         response = await self._send_command(command)
         decoded_response = response.decode()
         input_value = re.search("(?<=cur\\=)\\w+", decoded_response)
-        input_options = re.search("(?<=sel\\=)\\w+", decoded_response)
+        input_options = re.search("(?<=sel\\=)[\\w|]+", decoded_response)
 
         input_value = input_value.group() if input_value else ""
         input_options = input_options.group() if input_options else ""
