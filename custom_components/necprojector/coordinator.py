@@ -37,12 +37,13 @@ class NecProjectorCoordinator(DataUpdateCoordinator):
             focus_status = await self.api.async_get_lens_value("focus")
             h_shift_status = await self.api.async_get_lens_value("h_shift")
             v_shift_status = await self.api.async_get_lens_value("v_shift")
+            input_values = await self.api.async_get_input_options()
             
             if self.shutter_available:
                 shutter_status = await self.api.async_get_shutter_status()
             else:
                 shutter_status = {"shutter_status": "disabled"}
 
-            return power_status | shutter_status | zoom_status | focus_status | h_shift_status | v_shift_status
+            return power_status | shutter_status | zoom_status | focus_status | h_shift_status | v_shift_status | input_values
         except (ProjectorConnectionError, ProjectorCommandError) as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err

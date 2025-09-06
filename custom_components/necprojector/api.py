@@ -12,6 +12,7 @@ CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
 # NEC Projector Commands (ASCII)
 CMD_SHUTTER = "shutter {shutter_arg}\r"
 CMD_LENS = "lens {lens_subcmd} {lens_arg}\r"
+CMD_INPUT = "input {input_arg}"
 
 
 class ProjectorConnectionError(Exception):
@@ -104,7 +105,7 @@ class NecProjectorApi:
 
         return {"power_on": power_on, "status": status}
 
-    async def async_get_lens_value(self, lens_subcommand: str) -> dict[str, bool]:
+    async def async_get_lens_value(self, lens_subcommand: str) -> dict[str, str]:
         command = CMD_LENS.format(lens_subcmd=lens_subcommand, lens_arg="?").encode("ascii")
         response = await self._send_command(command)
         decoded_response = response.decode()
@@ -123,6 +124,26 @@ class NecProjectorApi:
 
     async def async_set_lens_value(self, lens_subcommand: str, lens_value: int) -> None:
         command = CMD_LENS.format(lens_subcmd=lens_subcommand, lens_arg=lens_value).encode("ascii")
+        await self._send_command(command)
+
+    async def async_get_input_options(self) -> dict[str, str | list[str]]:
+        command = CMD_INPUT.format(input_arg="?")
+        response = await self._send_command(command)
+        decoded_response = response.decode()
+        input_value = re.search("(?<=cur\\=)\\w+", decoded_response)
+        input_options = re.search("(?<=sel\\=)\\w+", decoded_response)
+
+        input_value = input_value.group() if input_value else ""
+        input_options = input_options.group() if input_options else ""
+        input_options = input_options.split(",")
+        
+        return {
+            "input_value": input_value,
+            "input_options": input_options
+        }
+
+    async def async_set_input_option(input_value: str) -> None:
+        command = CMD_INPUT.format(input_arg=input_value).encode("ascii")
         await self._send_command(command)
 
     async def async_test_connection(self) -> bool:
