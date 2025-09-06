@@ -135,7 +135,7 @@ class NecProjectorApi:
 
         input_value = input_value.group() if input_value else ""
         input_options = input_options.group() if input_options else ""
-        input_options = input_options.split(",")
+        input_options = input_options.split("|")
         
         return {
             "input_value": input_value,
