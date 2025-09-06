@@ -12,7 +12,7 @@ CMD_STATUS_QUERY = b"\x00\x85\x00\x00\x01\x01\x87"
 # NEC Projector Commands (ASCII)
 CMD_SHUTTER = "shutter {shutter_arg}\r"
 CMD_LENS = "lens {lens_subcmd} {lens_arg}\r"
-CMD_INPUT = "input {input_arg}"
+CMD_INPUT = "input {input_arg}\r"
 
 
 class ProjectorConnectionError(Exception):
