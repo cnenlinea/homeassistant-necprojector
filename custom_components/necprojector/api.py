@@ -142,7 +142,7 @@ class NecProjectorApi:
             "input_options": input_options
         }
 
-    async def async_set_input_option(input_value: str) -> None:
+    async def async_set_input_option(self, input_value: str) -> None:
         command = CMD_INPUT.format(input_arg=input_value).encode("ascii")
         await self._send_command(command)
 
