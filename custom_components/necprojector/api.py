@@ -127,7 +127,7 @@ class NecProjectorApi:
         await self._send_command(command)
 
     async def async_get_input_options(self) -> dict[str, str | list[str]]:
-        command = CMD_INPUT.format(input_arg="?")
+        command = CMD_INPUT.format(input_arg="?").encode("ascii")
         response = await self._send_command(command)
         decoded_response = response.decode()
         input_value = re.search("(?<=cur\\=)\\w+", decoded_response)
