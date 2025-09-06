@@ -37,7 +37,7 @@ class NecProjectorSelectInput(CoordinatorEntity, SelectEntity):
         self._attr_name = f"{entry.title} Input"
         self._attr_has_entity_name = True
         self._attr_available = True
-        self._attr_option = coordinator.data.get("input_options", [])
+        self._attr_options = coordinator.data.get("input_options", [])
 
     @property
     def device_info(self) -> DeviceInfo:
